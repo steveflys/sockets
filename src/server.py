@@ -1,4 +1,5 @@
 import socket
+from datetime import datetime
 
 
 sock = socket.socket(
@@ -12,32 +13,38 @@ sock.bind(address)
 
 sock.listen(1)
 
-conn, addr = sock.accept()
+day_time = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
 
+print(f'--- Starting server on port {address[1]} at {day_time}---')
+
+conn, addr = sock.accept()
 
 buffer_length = 8
 
 message_complete = False
 
+message = []
 
 while not message_complete:
     part = conn.recv(buffer_length)
-    print(part.decode('utf8'))
+    message.append(part)
     if len(part) < buffer_length:
         break
+
+message_final = b''
+
+bit_message = message_final.join(message)
+
+message_out = bit_message.decode('utf8')
+
+print(f'[{day_time}] Echoed: {message_out}')
 
 message = 'you are connected'
 
 conn.sendall(message.encode('utf8'))
 
-message_complete = False
-
-while not message_complete:
-    part = conn.recv(buffer_length)
-    print(part.decode('utf8'))
-    if len(part) < buffer_length:
-        break
-
 conn.close()
+print(f'--- Stopping server on port {address[1]} at {day_time}---')
 
 sock.close()
+

@@ -18,11 +18,21 @@ buffer_length = 8
 
 message_complete = False
 
+message_parts = []
+
 while not message_complete:
     part = client.recv(buffer_length)
-    print(part.decode('utf8'))
+    message_parts.append(part)
     if len(part) < buffer_length:
         break
+
+message_final = b''
+
+bit_message = message_final.join(message_parts)
+
+message_out = bit_message.decode('utf8')
+
+print(message_out)
 
 client.close()
 
