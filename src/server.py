@@ -23,21 +23,21 @@ buffer_length = 8
 
 message_complete = False
 
-message = []
+message = b''
 
 while not message_complete:
     part = conn.recv(buffer_length)
-    message.append(part)
+    message += part
     if len(part) < buffer_length:
         break
 
 message_final = b''
 
-bit_message = message_final.join(message)
+#bit_message = message_final.join(message)
 
-message_out = bit_message.decode('utf8')
+message = message.decode('utf8')
 
-print(f'[{day_time}] Echoed: {message_out}')
+print(f'[{day_time}] Echoed: {message}')
 
 message = 'you are connected'
 
