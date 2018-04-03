@@ -13,16 +13,17 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         if parsed_path.path == '/':
             self.send_response(200)
             self.end_headers()
-            
             self.wfile.write(b'You did a thing!')
+            return
 
         elif parsed_path.path == './test':
             try:
-                cat = json.loads(parse_qs[category])
+                cat = json.loads(parse_qs['category'][0])
             except KeyError:
                 self.send_response(400)
                 self.end_headers()
                 self.wfile.write(b'You did a bad thing')
+                return
         
             self.send_response(200)
             self.end_headers()
@@ -34,7 +35,9 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(b'Not found')
 
     def do_POST(self):
-        pass
+        self.send_response(200)
+        self.end_headers()
+        self.send_response_only()
 
 
 def create_server():
@@ -50,8 +53,7 @@ def run_forever():
     except KeyboardInterrupt:
         server.shutdown()
         server.server_close()
-        # sys.exit()
+
 
 if __name__ == '__main__':
-
     run_forever()
