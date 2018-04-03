@@ -11,40 +11,46 @@ address = ('127.0.0.1', 8888)
 
 sock.bind(address)
 
-sock.listen(1)
+try:
 
-day_time = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    sock.listen(1)
 
-print(f'--- Starting server on port {address[1]} at {day_time}---')
+    day_time = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
 
-conn, addr = sock.accept()
+    print(f'--- Starting server on port {address[1]} at {day_time}---')
 
-buffer_length = 8
+    conn, addr = sock.accept()
 
-message_complete = False
+    buffer_length = 8
 
-message = b''
+    message_complete = False
 
-while not message_complete:
-    part = conn.recv(buffer_length)
-    message += part
-    if len(part) < buffer_length:
-        break
+    message = b''
 
-message_final = b''
+    while not message_complete:
+        part = conn.recv(buffer_length)
+        message += part
+        if len(part) < buffer_length:
+            break
 
-#bit_message = message_final.join(message)
+    message = message.decode('utf8')
 
-message = message.decode('utf8')
+    print(f'[{day_time}] Echoed: {message}')
 
-print(f'[{day_time}] Echoed: {message}')
+    message = 'you are connected'
 
-message = 'you are connected'
+    conn.sendall(message.encode('utf8'))
 
-conn.sendall(message.encode('utf8'))
+except KeyboardInterrupt:
+    try:
+        conn.closed()
+
+    except NameError:
+
+        pass
 
 conn.close()
+
 print(f'--- Stopping server on port {address[1]} at {day_time}---')
 
 sock.close()
-
